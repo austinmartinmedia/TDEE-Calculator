@@ -83,7 +83,7 @@
 </head>
 <body>
     <div class="logo-container">
-        <img src="/mnt/data/10.png" alt="Future Strength Labs Logo">
+        <img src="src="data:image/png;base64,L1VzZXJzL2F1c3Rpbm1hcnRpbi9Eb3dubG9hZHMvRlVUVVJFIFNUUkVOR1RIIExBQlMvRlVUVVJFJ1MgTE9HTyAoTm8gQmFja2dyb3VuZCkvMTAucG5n" alt="Future Strength Labs Logo">
         <h1>Future Strength Labs</h1>
     </div>
     
@@ -125,7 +125,7 @@
     <div class="calculation-results" id="calculationResults"></div>
 
     <label for="daySelector">Select Day:</label>
-    <select id="daySelector" onchange="showMealPlan()">
+    <select id="daySelector" class="day-selector" onchange="showMealPlan()">
         <option value="day1">Day 1</option>
         <option value="day2">Day 2</option>
         <option value="day3">Day 3</option>
@@ -181,7 +181,7 @@
         }
 
         function generateMealPlans(weight, adjustedCalories) {
-            mealPlans = {
+           const mealPlans = {
                 day1: [
                     { meal: "Breakfast", food: "3 eggs, 1 cup cooked oats with 1 tbsp peanut butter", calories: 500, protein: 20, carbs: 40, fat: 22 },
                     { meal: "Lunch", food: "6 oz chicken breast, 1 cup brown rice, 1 cup mixed greens with 1 tbsp olive oil", calories: 700, protein: 50, carbs: 70, fat: 28 },
