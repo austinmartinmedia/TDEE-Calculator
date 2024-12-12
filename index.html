@@ -40,6 +40,12 @@
             background-color: #1a1a1a;
             border: 1px solid #444;
         }
+        .calculation-results {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #222;
+            border: 1px solid #444;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
@@ -65,10 +71,6 @@
 </head>
 <body>
     <h1>TDEE and Calorie Calculator</h1>
-    <p>Total Daily Energy Expenditure (TDEE) is the total number of calories your body burns in a day, including all activities.</p>
-    <p>Basal Metabolic Rate (BMR) is the number of calories your body needs at rest to maintain vital functions like breathing and circulation.</p>
-    <p><strong>BMR Formula:</strong> For males: 66 + (6.23 × weight in lbs) + (12.7 × height in inches) - (6.8 × age). For females: 655 + (4.35 × weight in lbs) + (4.7 × height in inches) - (4.7 × age).</p>
-    <p><strong>TDEE Formula:</strong> BMR × activity factor.</p>
 
     <label for="weight">Weight (lbs):</label>
     <input type="number" id="weight" placeholder="Enter your weight in pounds">
@@ -103,7 +105,7 @@
 
     <button onclick="calculateTDEE()">Calculate</button>
 
-    <div class="results" id="results"></div>
+    <div class="calculation-results" id="calculationResults"></div>
 
     <label for="daySelector">Select Day:</label>
     <select id="daySelector" onchange="showMealPlan()">
@@ -112,10 +114,13 @@
         <option value="day3">Day 3</option>
     </select>
 
-    <button onclick="downloadResults()">Download Results</button>
+    <div class="results" id="results"></div>
+
+    <button onclick="downloadResultsPDF()">Download Results as PDF</button>
 
     <script>
         let mealPlans = {};
+        let BMR, TDEE, adjustedCalories;
 
         function calculateTDEE() {
             const weight = parseFloat(document.getElementById('weight').value);
@@ -126,19 +131,17 @@
             const goal = document.getElementById('goal').value;
 
             if (!weight || !height || !age) {
-                document.getElementById('results').innerHTML = '<p>Please fill out all fields correctly.</p>';
+                document.getElementById('calculationResults').innerHTML = '<p>Please fill out all fields correctly.</p>';
                 return;
             }
 
-            let BMR;
             if (sex === 'male') {
                 BMR = 66 + (6.23 * weight) + (12.7 * height) - (6.8 * age);
             } else {
                 BMR = 655 + (4.35 * weight) + (4.7 * height) - (4.7 * age);
             }
 
-            const TDEE = BMR * activity;
-            let adjustedCalories;
+            TDEE = BMR * activity;
 
             if (goal === 'cutting') {
                 adjustedCalories = TDEE - 500;
@@ -148,6 +151,17 @@
                 adjustedCalories = TDEE + 300;
             }
 
+            document.getElementById('calculationResults').innerHTML = `
+                <h4>Calculation Results:</h4>
+                <p><strong>BMR:</strong> ${BMR.toFixed(2)} calories/day</p>
+                <p><strong>TDEE:</strong> ${TDEE.toFixed(2)} calories/day</p>
+                <p><strong>Adjusted Calories (${goal.charAt(0).toUpperCase() + goal.slice(1)}):</strong> ${adjustedCalories.toFixed(2)} calories/day</p>
+            `;
+
+            generateMealPlans(weight, adjustedCalories);
+        }
+
+        function generateMealPlans(weight, adjustedCalories) {
             mealPlans = {
                 day1: [
                     { meal: "Breakfast", description: "3 eggs, 1 slice whole-grain toast", calories: adjustedCalories * 0.25, protein: weight * 0.2, fats: (adjustedCalories * 0.25) / 9, carbs: ((adjustedCalories * 0.25) - (weight * 0.2 * 4) - ((adjustedCalories * 0.25) / 9)) / 4 },
@@ -191,14 +205,20 @@
             document.getElementById('results').innerHTML = resultsHTML;
         }
 
-        function downloadResults() {
-            const results = document.getElementById('results').innerText;
-            const blob = new Blob([results], { type: 'text/plain' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = 'TDEE_Results.txt';
-            link.click();
+        function downloadResultsPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            const calculations = document.getElementById('calculationResults').innerText;
+            const meals = document.getElementById('results').innerText;
+
+            doc.text("TDEE and Meal Plan Results", 10, 10);
+            doc.text(calculations, 10, 20);
+            doc.text(meals, 10, 40);
+
+            doc.save('TDEE_Results.pdf');
         }
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
 </body>
 </html>
