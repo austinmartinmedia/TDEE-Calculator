@@ -67,6 +67,20 @@
             color: #FFFFFF;
             font-size: 1.2em;
         }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+            background-color: #1a1a1a;
+        }
+        table, th, td {
+            border: 1px solid #9cf74d;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            color: #FFFFFF;
+        }
     </style>
 </head>
 <body>
@@ -150,6 +164,27 @@
                 { meal: "Snack", food: "Greek yogurt with 1/4 cup granola and honey drizzle", calories: 350, protein: 18, carbs: 50, fat: 12 },
                 { meal: "Dinner", food: "Grilled steak (8 oz), 1 large baked potato, steamed asparagus, 1 tbsp olive oil", calories: 750, protein: 52, carbs: 65, fat: 30 },
                 { meal: "Post-Workout", food: "Protein shake with almond milk and 1 tbsp peanut butter", calories: 220, protein: 25, carbs: 10, fat: 10 }
+            ],
+            day3: [
+                { meal: "Breakfast", food: "Smoothie (1 scoop protein powder, almond milk, 1 banana, 1 tbsp peanut butter, handful of spinach)", calories: 480, protein: 30, carbs: 40, fat: 18 },
+                { meal: "Lunch", food: "Chickpea salad (1 cup chickpeas, mixed greens, cucumber, cherry tomatoes, 1 tbsp olive oil) with 1 cup cooked quinoa", calories: 700, protein: 30, carbs: 85, fat: 28 },
+                { meal: "Snack", food: "Cottage cheese (1 cup) with pineapple and 1/4 cup walnuts", calories: 400, protein: 28, carbs: 35, fat: 20 },
+                { meal: "Dinner", food: "Tofu stir-fry (8 oz tofu, 1 cup broccoli, bell peppers, carrots, 1 cup brown rice, 1 tsp sesame oil)", calories: 700, protein: 40, carbs: 75, fat: 20 },
+                { meal: "Post-Workout", food: "Protein shake with water, 1 small apple", calories: 120, protein: 25, carbs: 15, fat: 1 }
+            ],
+            day4: [
+                { meal: "Breakfast", food: "Omelet (3 eggs, 3 egg whites, spinach, mushrooms, tomatoes), 1 cup oats with cinnamon and berries", calories: 600, protein: 30, carbs: 60, fat: 20 },
+                { meal: "Lunch", food: "Shrimp salad (8 oz shrimp, mixed greens, avocado, cucumber, bell peppers, 1 tbsp olive oil), 1 slice whole-grain bread", calories: 650, protein: 45, carbs: 50, fat: 25 },
+                { meal: "Snack", food: "Low-fat cheese stick, handful of almonds", calories: 220, protein: 10, carbs: 5, fat: 15 },
+                { meal: "Dinner", food: "Ground turkey (8 oz) with tomato sauce over 1 cup spaghetti squash, 1 cup steamed green beans, 1 tbsp olive oil", calories: 700, protein: 50, carbs: 40, fat: 30 },
+                { meal: "Post-Workout", food: "Protein shake with 1/2 cup blueberries", calories: 230, protein: 25, carbs: 30, fat: 1 }
+            ],
+            day5: [
+                { meal: "Breakfast", food: "3 eggs, 1/2 avocado, 1 slice whole-grain toast", calories: 450, protein: 20, carbs: 20, fat: 30 },
+                { meal: "Lunch", food: "Chicken burrito bowl (6 oz chicken, 1/2 cup brown rice, 1/2 cup black beans, pico de gallo, guacamole)", calories: 650, protein: 50, carbs: 55, fat: 25 },
+                { meal: "Snack", food: "Greek yogurt (1 cup) with 1 tbsp honey, handful of mixed nuts", calories: 300, protein: 20, carbs: 20, fat: 15 },
+                { meal: "Dinner", food: "Salmon (6 oz), 1 cup quinoa, steamed asparagus, 1 tbsp olive oil", calories: 700, protein: 45, carbs: 40, fat: 30 },
+                { meal: "Post-Workout", food: "Protein shake with almond milk and 1 small banana", calories: 250, protein: 25, carbs: 30, fat: 3 }
             ]
         };
 
@@ -168,80 +203,3 @@
             const unit = document.getElementById('unit').value;
             let weight, height;
 
-            if (unit === 'imperial') {
-                weight = parseFloat(document.getElementById('weight').value);
-                height = parseFloat(document.getElementById('height').value);
-            } else {
-                weight = parseFloat(document.getElementById('weight-metric').value) * 2.20462; // Convert kg to lbs
-                height = parseFloat(document.getElementById('height-metric').value) * 0.393701; // Convert cm to inches
-            }
-
-            const age = parseInt(document.getElementById('age').value);
-            const sex = document.getElementById('sex').value;
-            const activity = parseFloat(document.getElementById('activity').value);
-
-            if (!weight || !height || !age) {
-                document.getElementById('results').innerHTML = '<p>Please fill out all fields correctly.</p>';
-                return;
-            }
-
-            let BMR;
-            if (sex === 'male') {
-                BMR = 66 + (6.23 * weight) + (12.7 * height) - (6.8 * age);
-            } else {
-                BMR = 655 + (4.35 * weight) + (4.7 * height) - (4.7 * age);
-            }
-
-            const TDEE = BMR * activity;
-            const deficitCalories = TDEE - 500; // Cutting
-            const surplusCalories = TDEE + 500; // Bulking
-
-            document.getElementById('results').innerHTML = `
-                <h3>Results:</h3>
-                <p><strong>BMR:</strong> ${BMR.toFixed(2)} calories/day</p>
-                <p><strong>TDEE:</strong> ${TDEE.toFixed(2)} calories/day</p>
-                <p><strong>Cutting Calories:</strong> ${deficitCalories.toFixed(2)} calories/day</p>
-                <p><strong>Bulking Calories:</strong> ${surplusCalories.toFixed(2)} calories/day</p>
-            `;
-
-            updateMealPlan(TDEE);
-        }
-
-        function updateMealPlan(targetCalories) {
-            const selectedDay = document.getElementById('day-selector').value;
-            const multiplier = targetCalories / 2400; // Assume base meal plan is for 2400 calories
-            const plan = mealPlans[selectedDay];
-            let planHTML = '<h3>Personalized Meal Plan:</h3>';
-            let totalCalories = 0, totalProtein = 0, totalCarbs = 0, totalFat = 0;
-
-            plan.forEach(item => {
-                const adjustedCalories = (item.calories * multiplier).toFixed(0);
-                const adjustedProtein = (item.protein * multiplier).toFixed(0);
-                const adjustedCarbs = (item.carbs * multiplier).toFixed(0);
-                const adjustedFat = (item.fat * multiplier).toFixed(0);
-
-                totalCalories += parseFloat(adjustedCalories);
-                totalProtein += parseFloat(adjustedProtein);
-                totalCarbs += parseFloat(adjustedCarbs);
-                totalFat += parseFloat(adjustedFat);
-
-                planHTML += `
-                    <p><strong>${item.meal}:</strong> ${item.food}<br>
-                    <strong>Calories:</strong> ${adjustedCalories} | 
-                    <strong>Protein:</strong> ${adjustedProtein}g | 
-                    <strong>Carbs:</strong> ${adjustedCarbs}g | 
-                    <strong>Fat:</strong> ${adjustedFat}g</p>
-                `;
-            });
-
-            planHTML += `<h4>Total Daily Macros:</h4>
-                <p><strong>Calories:</strong> ${totalCalories.toFixed(0)}</p>
-                <p><strong>Protein:</strong> ${totalProtein.toFixed(0)}g</p>
-                <p><strong>Carbs:</strong> ${totalCarbs.toFixed(0)}g</p>
-                <p><strong>Fat:</strong> ${totalFat.toFixed(0)}g</p>`;
-
-            document.getElementById('meal-plan').innerHTML = planHTML;
-        }
-    </script>
-</body>
-</html>
