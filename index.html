@@ -93,7 +93,6 @@
         <option value="1.375">Lightly Active (light exercise/sports 1-3 days a week)</option>
         <option value="1.55">Moderately Active (moderate exercise/sports 3-5 days a week)</option>
         <option value="1.725">Very Active (hard exercise/sports 6-7 days a week)</option>
-        <option value="1.9">Super Active (very hard exercise/physical job)</option>
     </select>
 
     <label for="goal">Goal:</label>
@@ -112,6 +111,8 @@
         <option value="day1">Day 1</option>
         <option value="day2">Day 2</option>
         <option value="day3">Day 3</option>
+        <option value="day4">Day 4</option>
+        <option value="day5">Day 5</option>
     </select>
 
     <div class="results" id="results"></div>
@@ -164,18 +165,32 @@
         function generateMealPlans(weight, adjustedCalories) {
             mealPlans = {
                 day1: [
+                    { meal: "Breakfast", food: "3 eggs, 1 cup cooked oats with 1 tbsp peanut butter", calories: 500, protein: 20, carbs: 40, fat: 22 },
+                    { meal: "Lunch", food: "6 oz chicken breast, 1 cup brown rice, 1 cup mixed greens with 1 tbsp olive oil", calories: 700, protein: 50, carbs: 70, fat: 28 },
+                    { meal: "Snack", food: "1 cup Greek yogurt with 1 banana, 1 tbsp chia seeds", calories: 350, protein: 20, carbs: 50, fat: 8 },
+                    { meal: "Dinner", food: "8 oz canned tuna, 1 cup quinoa, 1 cup steamed broccoli with 1 tbsp olive oil", calories: 750, protein: 55, carbs: 65, fat: 28 },
+                    { meal: "Snack", food: "1 apple with 2 tbsp peanut butter", calories: 100, protein: 5, carbs: 25, fat: 16 }
+                ],
+                day2: [
+                    { meal: "Breakfast", food: "Overnight oats (1/2 cup oats, 1 scoop protein, 1 tbsp almond butter, almond milk, berries)", calories: 500, protein: 30, carbs: 45, fat: 18 },
+                    { meal: "Lunch", food: "Turkey wrap (6 oz turkey, whole-grain wrap, lettuce, tomato, cucumber, 1 tbsp hummus)", calories: 580, protein: 45, carbs: 50, fat: 20 },
+                    { meal: "Snack", food: "Greek yogurt with 1/4 cup granola and honey drizzle", calories: 350, protein: 18, carbs: 50, fat: 12 },
+                    { meal: "Dinner", food: "Grilled steak (8 oz), 1 large baked potato, steamed asparagus, 1 tbsp olive oil", calories: 750, protein: 52, carbs: 65, fat: 30 },
+                    { meal: "Post-Workout", food: "Protein shake with almond milk and 1 tbsp peanut butter", calories: 220, protein: 25, carbs: 10, fat: 10 }
+                ],
+                day3: [
                     { meal: "Breakfast", description: "3 eggs, 1 slice whole-grain toast", calories: adjustedCalories * 0.25, protein: weight * 0.2, fats: (adjustedCalories * 0.25) / 9, carbs: ((adjustedCalories * 0.25) - (weight * 0.2 * 4) - ((adjustedCalories * 0.25) / 9)) / 4 },
                     { meal: "Snack", description: "Greek yogurt (plain, low-fat)", calories: adjustedCalories * 0.1, protein: weight * 0.1, fats: (adjustedCalories * 0.1) / 9, carbs: ((adjustedCalories * 0.1) - (weight * 0.1 * 4) - ((adjustedCalories * 0.1) / 9)) / 4 },
                     { meal: "Lunch", description: "Grilled chicken salad, olive oil dressing", calories: adjustedCalories * 0.3, protein: weight * 0.3, fats: (adjustedCalories * 0.3) / 9, carbs: ((adjustedCalories * 0.3) - (weight * 0.3 * 4) - ((adjustedCalories * 0.3) / 9)) / 4 },
                     { meal: "Dinner", description: "Salmon, quinoa, steamed broccoli", calories: adjustedCalories * 0.35, protein: weight * 0.4, fats: (adjustedCalories * 0.35) / 9, carbs: ((adjustedCalories * 0.35) - (weight * 0.4 * 4) - ((adjustedCalories * 0.35) / 9)) / 4 }
                 ],
-                day2: [
+                day4: [
                     { meal: "Breakfast", description: "Oatmeal with berries", calories: adjustedCalories * 0.25, protein: weight * 0.2, fats: (adjustedCalories * 0.25) / 9, carbs: ((adjustedCalories * 0.25) - (weight * 0.2 * 4) - ((adjustedCalories * 0.25) / 9)) / 4 },
                     { meal: "Snack", description: "Protein bar", calories: adjustedCalories * 0.1, protein: weight * 0.1, fats: (adjustedCalories * 0.1) / 9, carbs: ((adjustedCalories * 0.1) - (weight * 0.1 * 4) - ((adjustedCalories * 0.1) / 9)) / 4 },
                     { meal: "Lunch", description: "Turkey sandwich on whole-grain bread", calories: adjustedCalories * 0.3, protein: weight * 0.3, fats: (adjustedCalories * 0.3) / 9, carbs: ((adjustedCalories * 0.3) - (weight * 0.3 * 4) - ((adjustedCalories * 0.3) / 9)) / 4 },
                     { meal: "Dinner", description: "Grilled chicken, sweet potato, asparagus", calories: adjustedCalories * 0.35, protein: weight * 0.4, fats: (adjustedCalories * 0.35) / 9, carbs: ((adjustedCalories * 0.35) - (weight * 0.4 * 4) - ((adjustedCalories * 0.35) / 9)) / 4 }
                 ],
-                day3: [
+                day5: [
                     { meal: "Breakfast", description: "Scrambled eggs with spinach", calories: adjustedCalories * 0.25, protein: weight * 0.2, fats: (adjustedCalories * 0.25) / 9, carbs: ((adjustedCalories * 0.25) - (weight * 0.2 * 4) - ((adjustedCalories * 0.25) / 9)) / 4 },
                     { meal: "Snack", description: "Apple and peanut butter", calories: adjustedCalories * 0.1, protein: weight * 0.1, fats: (adjustedCalories * 0.1) / 9, carbs: ((adjustedCalories * 0.1) - (weight * 0.1 * 4) - ((adjustedCalories * 0.1) / 9)) / 4 },
                     { meal: "Lunch", description: "Grilled salmon salad", calories: adjustedCalories * 0.3, protein: weight * 0.3, fats: (adjustedCalories * 0.3) / 9, carbs: ((adjustedCalories * 0.3) - (weight * 0.3 * 4) - ((adjustedCalories * 0.3) / 9)) / 4 },
