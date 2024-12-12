@@ -65,7 +65,8 @@
 </head>
 <body>
     <h1>TDEE and Calorie Calculator</h1>
-    <p>Total Daily Energy Expenditure (TDEE) is the total number of calories your body burns in a day, including all activities. Basal Metabolic Rate (BMR) is the number of calories your body needs at rest to maintain vital functions like breathing and circulation.</p>
+    <p>Total Daily Energy Expenditure (TDEE) is the total number of calories your body burns in a day, including all activities.</p>
+    <p>Basal Metabolic Rate (BMR) is the number of calories your body needs at rest to maintain vital functions like breathing and circulation.</p>
     <p><strong>BMR Formula:</strong> For males: 66 + (6.23 × weight in lbs) + (12.7 × height in inches) - (6.8 × age). For females: 655 + (4.35 × weight in lbs) + (4.7 × height in inches) - (4.7 × age).</p>
     <p><strong>TDEE Formula:</strong> BMR × activity factor.</p>
 
@@ -104,7 +105,18 @@
 
     <div class="results" id="results"></div>
 
+    <label for="daySelector">Select Day:</label>
+    <select id="daySelector" onchange="showMealPlan()">
+        <option value="day1">Day 1</option>
+        <option value="day2">Day 2</option>
+        <option value="day3">Day 3</option>
+    </select>
+
+    <button onclick="downloadResults()">Download Results</button>
+
     <script>
+        let mealPlans = {};
+
         function calculateTDEE() {
             const weight = parseFloat(document.getElementById('weight').value);
             const height = parseFloat(document.getElementById('height').value);
@@ -136,61 +148,56 @@
                 adjustedCalories = TDEE + 300;
             }
 
-            const mealPlan = [
-                { meal: "Breakfast", description: "3 eggs, 1 slice whole-grain toast", calories: adjustedCalories * 0.25, protein: weight * 0.2, fats: (adjustedCalories * 0.25) / 9, carbs: ((adjustedCalories * 0.25) - (weight * 0.2 * 4) - ((adjustedCalories * 0.25) / 9)) / 4 },
-                { meal: "Snack", description: "Greek yogurt (plain, low-fat)", calories: adjustedCalories * 0.1, protein: weight * 0.1, fats: (adjustedCalories * 0.1) / 9, carbs: ((adjustedCalories * 0.1) - (weight * 0.1 * 4) - ((adjustedCalories * 0.1) / 9)) / 4 },
-                { meal: "Lunch", description: "Grilled chicken salad, olive oil dressing", calories: adjustedCalories * 0.3, protein: weight * 0.3, fats: (adjustedCalories * 0.3) / 9, carbs: ((adjustedCalories * 0.3) - (weight * 0.3 * 4) - ((adjustedCalories * 0.3) / 9)) / 4 },
-                { meal: "Dinner", description: "Salmon, quinoa, steamed broccoli", calories: adjustedCalories * 0.35, protein: weight * 0.4, fats: (adjustedCalories * 0.35) / 9, carbs: ((adjustedCalories * 0.35) - (weight * 0.4 * 4) - ((adjustedCalories * 0.35) / 9)) / 4 }
-            ];
+            mealPlans = {
+                day1: [
+                    { meal: "Breakfast", description: "3 eggs, 1 slice whole-grain toast", calories: adjustedCalories * 0.25, protein: weight * 0.2, fats: (adjustedCalories * 0.25) / 9, carbs: ((adjustedCalories * 0.25) - (weight * 0.2 * 4) - ((adjustedCalories * 0.25) / 9)) / 4 },
+                    { meal: "Snack", description: "Greek yogurt (plain, low-fat)", calories: adjustedCalories * 0.1, protein: weight * 0.1, fats: (adjustedCalories * 0.1) / 9, carbs: ((adjustedCalories * 0.1) - (weight * 0.1 * 4) - ((adjustedCalories * 0.1) / 9)) / 4 },
+                    { meal: "Lunch", description: "Grilled chicken salad, olive oil dressing", calories: adjustedCalories * 0.3, protein: weight * 0.3, fats: (adjustedCalories * 0.3) / 9, carbs: ((adjustedCalories * 0.3) - (weight * 0.3 * 4) - ((adjustedCalories * 0.3) / 9)) / 4 },
+                    { meal: "Dinner", description: "Salmon, quinoa, steamed broccoli", calories: adjustedCalories * 0.35, protein: weight * 0.4, fats: (adjustedCalories * 0.35) / 9, carbs: ((adjustedCalories * 0.35) - (weight * 0.4 * 4) - ((adjustedCalories * 0.35) / 9)) / 4 }
+                ],
+                day2: [
+                    { meal: "Breakfast", description: "Oatmeal with berries", calories: adjustedCalories * 0.25, protein: weight * 0.2, fats: (adjustedCalories * 0.25) / 9, carbs: ((adjustedCalories * 0.25) - (weight * 0.2 * 4) - ((adjustedCalories * 0.25) / 9)) / 4 },
+                    { meal: "Snack", description: "Protein bar", calories: adjustedCalories * 0.1, protein: weight * 0.1, fats: (adjustedCalories * 0.1) / 9, carbs: ((adjustedCalories * 0.1) - (weight * 0.1 * 4) - ((adjustedCalories * 0.1) / 9)) / 4 },
+                    { meal: "Lunch", description: "Turkey sandwich on whole-grain bread", calories: adjustedCalories * 0.3, protein: weight * 0.3, fats: (adjustedCalories * 0.3) / 9, carbs: ((adjustedCalories * 0.3) - (weight * 0.3 * 4) - ((adjustedCalories * 0.3) / 9)) / 4 },
+                    { meal: "Dinner", description: "Grilled chicken, sweet potato, asparagus", calories: adjustedCalories * 0.35, protein: weight * 0.4, fats: (adjustedCalories * 0.35) / 9, carbs: ((adjustedCalories * 0.35) - (weight * 0.4 * 4) - ((adjustedCalories * 0.35) / 9)) / 4 }
+                ],
+                day3: [
+                    { meal: "Breakfast", description: "Scrambled eggs with spinach", calories: adjustedCalories * 0.25, protein: weight * 0.2, fats: (adjustedCalories * 0.25) / 9, carbs: ((adjustedCalories * 0.25) - (weight * 0.2 * 4) - ((adjustedCalories * 0.25) / 9)) / 4 },
+                    { meal: "Snack", description: "Apple and peanut butter", calories: adjustedCalories * 0.1, protein: weight * 0.1, fats: (adjustedCalories * 0.1) / 9, carbs: ((adjustedCalories * 0.1) - (weight * 0.1 * 4) - ((adjustedCalories * 0.1) / 9)) / 4 },
+                    { meal: "Lunch", description: "Grilled salmon salad", calories: adjustedCalories * 0.3, protein: weight * 0.3, fats: (adjustedCalories * 0.3) / 9, carbs: ((adjustedCalories * 0.3) - (weight * 0.3 * 4) - ((adjustedCalories * 0.3) / 9)) / 4 },
+                    { meal: "Dinner", description: "Steak, mashed potatoes, green beans", calories: adjustedCalories * 0.35, protein: weight * 0.4, fats: (adjustedCalories * 0.35) / 9, carbs: ((adjustedCalories * 0.35) - (weight * 0.4 * 4) - ((adjustedCalories * 0.35) / 9)) / 4 }
+                ]
+            };
 
-            const totalCalories = mealPlan.reduce((sum, meal) => sum + meal.calories, 0);
-            const totalProtein = mealPlan.reduce((sum, meal) => sum + meal.protein, 0);
-            const totalFats = mealPlan.reduce((sum, meal) => sum + meal.fats, 0);
-            const totalCarbs = mealPlan.reduce((sum, meal) => sum + meal.carbs, 0);
+            showMealPlan();
+        }
 
-            let resultsHTML = `
-                <h3>Results:</h3>
-                <p><strong>BMR:</strong> ${BMR.toFixed(2)} calories/day</p>
-                <p><strong>TDEE:</strong> ${TDEE.toFixed(2)} calories/day</p>
-                <p><strong>${goal.charAt(0).toUpperCase() + goal.slice(1)} Calories:</strong> ${adjustedCalories.toFixed(2)} calories/day</p>
-                <h4>Meal Plan:</h4>
-                <table>
-                    <tr>
-                        <th>Meal</th>
-                        <th>Description</th>
-                        <th>Calories</th>
-                        <th>Protein (g)</th>
-                        <th>Fats (g)</th>
-                        <th>Carbs (g)</th>
-                    </tr>
-            `;
+        function showMealPlan() {
+            const selectedDay = document.getElementById('daySelector').value;
+            const mealPlan = mealPlans[selectedDay];
+
+            if (!mealPlan) {
+                document.getElementById('results').innerHTML = '<p>Please calculate your TDEE first.</p>';
+                return;
+            }
+
+            let resultsHTML = '<h4>Meal Plan:</h4><table><tr><th>Meal</th><th>Description</th><th>Calories</th><th>Protein (g)</th><th>Fats (g)</th><th>Carbs (g)</th></tr>';
 
             mealPlan.forEach(meal => {
-                resultsHTML += `
-                    <tr>
-                        <td>${meal.meal}</td>
-                        <td>${meal.description}</td>
-                        <td>${meal.calories.toFixed(2)}</td>
-                        <td>${meal.protein.toFixed(2)}</td>
-                        <td>${meal.fats.toFixed(2)}</td>
-                        <td>${meal.carbs.toFixed(2)}</td>
-                    </tr>
-                `;
+                resultsHTML += `<tr><td>${meal.meal}</td><td>${meal.description}</td><td>${meal.calories.toFixed(2)}</td><td>${meal.protein.toFixed(2)}</td><td>${meal.fats.toFixed(2)}</td><td>${meal.carbs.toFixed(2)}</td></tr>`;
             });
 
-            resultsHTML += `
-                <tr class="highlight">
-                    <td>Total</td>
-                    <td></td>
-                    <td>${totalCalories.toFixed(2)}</td>
-                    <td>${totalProtein.toFixed(2)}</td>
-                    <td>${totalFats.toFixed(2)}</td>
-                    <td>${totalCarbs.toFixed(2)}</td>
-                </tr>
-                </table>
-            `;
-
+            resultsHTML += '</table>';
             document.getElementById('results').innerHTML = resultsHTML;
+        }
+
+        function downloadResults() {
+            const results = document.getElementById('results').innerText;
+            const blob = new Blob([results], { type: 'text/plain' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'TDEE_Results.txt';
+            link.click();
         }
     </script>
 </body>
