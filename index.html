@@ -127,7 +127,7 @@
     <div class="calculation-results" id="calculationResults"></div>
 
     <label for="daySelector">Select Day:</label>
-    <select id="daySelector" class="day-selector">
+    <select id="daySelector" class="day-selector" onchange="showMealPlan()">
         <option value="day1">Day 1</option>
         <option value="day2">Day 2</option>
         <option value="day3">Day 3</option>
@@ -175,18 +175,44 @@
                 <p><strong>Adjusted Calories (${goal.charAt(0).toUpperCase() + goal.slice(1)}):</strong> ${adjustedCalories.toFixed(2)} calories/day</p>
             `;
 
-            generateMealPlans(weight, adjustedCalories);
-        });
-
-        function generateMealPlans(weight, adjustedCalories) {
-            mealPlans = {
-                day1: [
-                    { meal: "Breakfast", description: "3 eggs, 1 cup cooked oats with 1 tbsp peanut butter", calories: 500, protein: 20, carbs: 40, fats: 22 },
-                    { meal: "Lunch", description: "6 oz chicken breast, 1 cup brown rice, 1 cup mixed greens with 1 tbsp olive oil", calories: 700, protein: 50, carbs: 70, fats: 28 }
-                ]
-            };
-            showMealPlan();
-        }
+    <script>
+        let mealPlans = {
+            day1: [
+                { meal: "Breakfast", description: "3 eggs, 1/2 avocado, 1 slice whole-grain toast, 1 cup Greek yogurt with berries", calories: 580, protein: 35, carbs: 40, fat: 25 },
+                { meal: "Lunch", description: "6 oz grilled chicken breast, 1 cup quinoa, 1 cup mixed greens with 1 tbsp olive oil", calories: 750, protein: 54, carbs: 70, fat: 28 },
+                { meal: "Snack", description: "Cottage cheese (1 cup), handful of almonds", calories: 300, protein: 25, carbs: 10, fat: 18 },
+                { meal: "Dinner", description: "8 oz salmon, 1 cup roasted sweet potatoes, 1 cup steamed broccoli, 1 tsp olive oil", calories: 770, protein: 55, carbs: 60, fat: 28 },
+                { meal: "Post-Workout", description: "1 scoop protein powder with water, banana", calories: 200, protein: 25, carbs: 30, fat: 1 }
+            ],
+            day2: [
+                { meal: "Breakfast", description: "Overnight oats (1/2 cup oats, 1 scoop protein, 1 tbsp almond butter, almond milk, berries)", calories: 500, protein: 30, carbs: 45, fat: 18 },
+                { meal: "Lunch", description: "Turkey wrap (6 oz turkey, whole-grain wrap, lettuce, tomato, cucumber, 1 tbsp hummus) with side of baby carrots and celery sticks", calories: 580, protein: 45, carbs: 50, fat: 20 },
+                { meal: "Snack", description: "Greek yogurt with 1/4 cup granola and honey drizzle", calories: 350, protein: 18, carbs: 50, fat: 12 },
+                { meal: "Dinner", description: "Grilled steak (8 oz), 1 large baked potato, steamed asparagus, 1 tbsp olive oil", calories: 750, protein: 52, carbs: 65, fat: 30 },
+                { meal: "Post-Workout", description: "Protein shake with almond milk and 1 tbsp peanut butter", calories: 220, protein: 25, carbs: 10, fat: 10 }
+            ],
+            day3: [
+                { meal: "Breakfast", description: "Smoothie (1 scoop protein powder, almond milk, 1 banana, 1 tbsp peanut butter, handful of spinach)", calories: 480, protein: 30, carbs: 40, fat: 18 },
+                { meal: "Lunch", description: "Chickpea salad (1 cup chickpeas, mixed greens, cucumber, cherry tomatoes, 1 tbsp olive oil) with 1 cup cooked quinoa", calories: 700, protein: 30, carbs: 85, fat: 28 },
+                { meal: "Snack", description: "Cottage cheese (1 cup) with pineapple and 1/4 cup walnuts", calories: 400, protein: 28, carbs: 35, fat: 20 },
+                { meal: "Dinner", description: "Tofu stir-fry (8 oz tofu, 1 cup broccoli, bell peppers, carrots, 1 cup brown rice, 1 tsp sesame oil)", calories: 700, protein: 40, carbs: 75, fat: 20 },
+                { meal: "Post-Workout", description: "Protein shake with water, 1 small apple", calories: 120, protein: 25, carbs: 15, fat: 1 }
+            ],
+            day4: [
+                { meal: "Breakfast", description: "Omelet (3 eggs, 3 egg whites, spinach, mushrooms, tomatoes), 1 cup oats with cinnamon and berries", calories: 600, protein: 30, carbs: 60, fat: 20 },
+                { meal: "Lunch", description: "Shrimp salad (8 oz shrimp, mixed greens, avocado, cucumber, bell peppers, 1 tbsp olive oil), 1 slice whole-grain bread", calories: 650, protein: 45, carbs: 50, fat: 25 },
+                { meal: "Snack", description: "Low-fat cheese stick, handful of almonds", calories: 220, protein: 10, carbs: 5, fat: 15 },
+                { meal: "Dinner", description: "Ground turkey (8 oz) with tomato sauce over 1 cup spaghetti squash, 1 cup steamed green beans, 1 tbsp olive oil", calories: 700, protein: 50, carbs: 40, fat: 30 },
+                { meal: "Post-Workout", description: "Protein shake with 1/2 cup blueberries", calories: 230, protein: 25, carbs: 30, fat: 1 }
+            ],
+            day5: [
+                { meal: "Breakfast", description: "Cottage cheese (1 cup) with pineapple and 1/4 cup granola", calories: 420, protein: 30, carbs: 45, fat: 10 },
+                { meal: "Lunch", description: "Quinoa bowl (1 cup quinoa, 6 oz grilled chicken, roasted sweet potato, kale, 1 tbsp tahini)", calories: 700, protein: 45, carbs: 65, fat: 28 },
+                { meal: "Snack", description: "Protein shake with almond milk, 1 tbsp almond butter", calories: 300, protein: 25, carbs: 12, fat: 16 },
+                { meal: "Dinner", description: "Baked cod (8 oz) with 1 cup roasted Brussels sprouts, carrots, and 1 large red potato with 1 tbsp olive oil", calories: 730, protein: 55, carbs: 65, fat: 25 },
+                { meal: "Post-Workout", description: "Greek yogurt with a handful of mixed berries", calories: 250, protein: 15, carbs: 35, fat: 5 }
+            ]
+        };
 
         function showMealPlan() {
             const selectedDay = document.getElementById('daySelector').value;
