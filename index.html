@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>TDEE and Calorie Deficit Calculator</title>
+    <title>TDEE and Calorie Calculator</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -11,6 +11,7 @@
             margin: 20px;
             max-width: 800px;
             margin: auto;
+            font-size: 130%;
         }
         label {
             display: block;
@@ -18,7 +19,7 @@
         }
         input, select {
             margin-top: 5px;
-            padding: 8px;
+            padding: 12px;
             width: 100%;
             box-sizing: border-box;
         }
@@ -63,8 +64,10 @@
     </style>
 </head>
 <body>
-    <h1>TDEE and Calorie Deficit Calculator</h1>
-    <p>Enter your details below to calculate your Total Daily Energy Expenditure (TDEE) and calorie deficit for cutting. You'll also see a personalized meal plan based on your goals.</p>
+    <h1>TDEE and Calorie Calculator</h1>
+    <p>Total Daily Energy Expenditure (TDEE) is the total number of calories your body burns in a day, including all activities. Basal Metabolic Rate (BMR) is the number of calories your body needs at rest to maintain vital functions like breathing and circulation.</p>
+    <p><strong>BMR Formula:</strong> For males: 66 + (6.23 × weight in lbs) + (12.7 × height in inches) - (6.8 × age). For females: 655 + (4.35 × weight in lbs) + (4.7 × height in inches) - (4.7 × age).</p>
+    <p><strong>TDEE Formula:</strong> BMR × activity factor.</p>
 
     <label for="weight">Weight (lbs):</label>
     <input type="number" id="weight" placeholder="Enter your weight in pounds">
@@ -90,6 +93,13 @@
         <option value="1.9">Super Active (very hard exercise/physical job)</option>
     </select>
 
+    <label for="goal">Goal:</label>
+    <select id="goal">
+        <option value="cutting">Cutting</option>
+        <option value="maintenance">Maintenance</option>
+        <option value="bulking">Bulking</option>
+    </select>
+
     <button onclick="calculateTDEE()">Calculate</button>
 
     <div class="results" id="results"></div>
@@ -101,6 +111,7 @@
             const age = parseInt(document.getElementById('age').value);
             const sex = document.getElementById('sex').value;
             const activity = parseFloat(document.getElementById('activity').value);
+            const goal = document.getElementById('goal').value;
 
             if (!weight || !height || !age) {
                 document.getElementById('results').innerHTML = '<p>Please fill out all fields correctly.</p>';
@@ -115,14 +126,21 @@
             }
 
             const TDEE = BMR * activity;
-            const deficitCalories = TDEE - 500; // Cutting deficit
+            let adjustedCalories;
 
-            // Generate meal plan dynamically
+            if (goal === 'cutting') {
+                adjustedCalories = TDEE - 500;
+            } else if (goal === 'maintenance') {
+                adjustedCalories = TDEE;
+            } else if (goal === 'bulking') {
+                adjustedCalories = TDEE + 300;
+            }
+
             const mealPlan = [
-                { meal: "Breakfast", description: "3 eggs, 1 slice whole-grain toast", calories: deficitCalories * 0.25, protein: weight * 0.2, fats: (deficitCalories * 0.25) / 9, carbs: ((deficitCalories * 0.25) - (weight * 0.2 * 4) - ((deficitCalories * 0.25) / 9)) / 4 },
-                { meal: "Snack", description: "Greek yogurt (plain, low-fat)", calories: deficitCalories * 0.1, protein: weight * 0.1, fats: (deficitCalories * 0.1) / 9, carbs: ((deficitCalories * 0.1) - (weight * 0.1 * 4) - ((deficitCalories * 0.1) / 9)) / 4 },
-                { meal: "Lunch", description: "Grilled chicken salad, olive oil dressing", calories: deficitCalories * 0.3, protein: weight * 0.3, fats: (deficitCalories * 0.3) / 9, carbs: ((deficitCalories * 0.3) - (weight * 0.3 * 4) - ((deficitCalories * 0.3) / 9)) / 4 },
-                { meal: "Dinner", description: "Salmon, quinoa, steamed broccoli", calories: deficitCalories * 0.35, protein: weight * 0.4, fats: (deficitCalories * 0.35) / 9, carbs: ((deficitCalories * 0.35) - (weight * 0.4 * 4) - ((deficitCalories * 0.35) / 9)) / 4 }
+                { meal: "Breakfast", description: "3 eggs, 1 slice whole-grain toast", calories: adjustedCalories * 0.25, protein: weight * 0.2, fats: (adjustedCalories * 0.25) / 9, carbs: ((adjustedCalories * 0.25) - (weight * 0.2 * 4) - ((adjustedCalories * 0.25) / 9)) / 4 },
+                { meal: "Snack", description: "Greek yogurt (plain, low-fat)", calories: adjustedCalories * 0.1, protein: weight * 0.1, fats: (adjustedCalories * 0.1) / 9, carbs: ((adjustedCalories * 0.1) - (weight * 0.1 * 4) - ((adjustedCalories * 0.1) / 9)) / 4 },
+                { meal: "Lunch", description: "Grilled chicken salad, olive oil dressing", calories: adjustedCalories * 0.3, protein: weight * 0.3, fats: (adjustedCalories * 0.3) / 9, carbs: ((adjustedCalories * 0.3) - (weight * 0.3 * 4) - ((adjustedCalories * 0.3) / 9)) / 4 },
+                { meal: "Dinner", description: "Salmon, quinoa, steamed broccoli", calories: adjustedCalories * 0.35, protein: weight * 0.4, fats: (adjustedCalories * 0.35) / 9, carbs: ((adjustedCalories * 0.35) - (weight * 0.4 * 4) - ((adjustedCalories * 0.35) / 9)) / 4 }
             ];
 
             const totalCalories = mealPlan.reduce((sum, meal) => sum + meal.calories, 0);
@@ -130,12 +148,11 @@
             const totalFats = mealPlan.reduce((sum, meal) => sum + meal.fats, 0);
             const totalCarbs = mealPlan.reduce((sum, meal) => sum + meal.carbs, 0);
 
-            // Render results
             let resultsHTML = `
                 <h3>Results:</h3>
                 <p><strong>BMR:</strong> ${BMR.toFixed(2)} calories/day</p>
                 <p><strong>TDEE:</strong> ${TDEE.toFixed(2)} calories/day</p>
-                <p><strong>Cutting Calories:</strong> ${deficitCalories.toFixed(2)} calories/day</p>
+                <p><strong>${goal.charAt(0).toUpperCase() + goal.slice(1)} Calories:</strong> ${adjustedCalories.toFixed(2)} calories/day</p>
                 <h4>Meal Plan:</h4>
                 <table>
                     <tr>
@@ -178,3 +195,4 @@
     </script>
 </body>
 </html>
+
