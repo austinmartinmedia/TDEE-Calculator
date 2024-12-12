@@ -46,6 +46,7 @@
             padding: 20px;
             background-color: #1a1a1a;
             border: 1px solid #9cf74d;
+            border-left: 2px solid #9cf74d; /* Add left border for meal plan and equations */
             width: 100%;
         }
         .toggle {
@@ -203,3 +204,33 @@
             const unit = document.getElementById('unit').value;
             let weight, height;
 
+            if (unit === 'imperial') {
+                weight = parseFloat(document.getElementById('weight').value);
+                height = parseFloat(document.getElementById('height').value);
+            } else {
+                weight = parseFloat(document.getElementById('weight-metric').value) * 2.20462; // Convert kg to lbs
+                height = parseFloat(document.getElementById('height-metric').value) * 0.393701; // Convert cm to inches
+            }
+
+            const age = parseInt(document.getElementById('age').value);
+            const sex = document.getElementById('sex').value;
+            const activity = parseFloat(document.getElementById('activity').value);
+
+            if (!weight || !height || !age) {
+                document.getElementById('results').innerHTML = '<p>Please fill out all fields correctly.</p>';
+                return;
+            }
+
+            let BMR;
+            if (sex === 'male') {
+                BMR = 66 + (6.23 * weight) + (12.7 * height) - (6.8 * age);
+            } else {
+                BMR = 655 + (4.35 * weight) + (4.7 * height) - (4.7 * age);
+            }
+
+            const TDEE = BMR * activity;
+            document.getElementById('results').innerHTML = `
+                <h3>Results:</h3>
+                <p><strong>BMR:</strong> ${BMR.toFixed(2)} calories/day</p>
+                <p><strong>TDEE:</strong> ${TDEE.toFixed(2)} calories/day</p>
+            `;
