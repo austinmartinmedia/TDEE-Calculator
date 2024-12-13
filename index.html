@@ -9,16 +9,19 @@
         color: #FFFFFF;
         line-height: 1.6;
         margin: 0;
-        display: block; /* Change from flex to block for natural scrolling */
-        min-height: 100vh; /* Ensure the body covers the full viewport height */
+        display: flex; /* Keep flexbox for centering */
+        flex-direction: column; /* Ensure natural flow for scrolling */
+        justify-content: flex-start; /* Align items from the top */
+        align-items: center; /* Center items horizontally */
+        min-height: 100vh; /* Ensure body covers full viewport height */
+        overflow-y: auto; /* Enable vertical scrolling */
         padding: 20px; /* Add padding for spacing */
-        overflow-y: auto; /* Enable scrolling */
-        text-align: center; /* Keep content centered */
     }
 
         .container {
-            max-width: 800px;
-            width: 100%;
+            max-width: 800px; /* Limit container width */
+            width: 100%; /* Allow full width within max limit */
+            text-align: center; /* Center-align text and inline elements */
         }
         label {
             display: block;
