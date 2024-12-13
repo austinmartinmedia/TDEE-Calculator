@@ -34,7 +34,7 @@
             border: 1px solid #9cf74d;
             font-size: 1.2em;
             margin: auto;
-            display: block;
+            display: auto;
         }
         button {
             margin-top: 10px;
@@ -137,7 +137,7 @@
         <div class="calculation-results" id="calculationResults"></div>
 
         <label for="daySelector">Select Day:</label>
-        <select id="daySelector" class="day-selector" onchange="showMealPlan()">
+        <select id="daySelector" class="day-selector" 
             <option value="day1">Day 1</option>
             <option value="day2">Day 2</option>
             <option value="day3">Day 3</option>
@@ -220,6 +220,9 @@
                 <p><strong>TDEE:</strong> ${TDEE.toFixed(2)} calories/day</p>
                 <p><strong>Adjusted Calories (${goal.charAt(0).toUpperCase() + goal.slice(1)}):</strong> ${adjustedCalories.toFixed(2)} calories/day</p>
             `;
+            const daySelector = document.getElementById('daySelector');
+            const selectedDay = daySelector.value;
+            showMealPlan(selectedDay);
         });
 
         function showMealPlan() {
