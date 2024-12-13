@@ -3,18 +3,20 @@
 <head>
     <title>TDEE and Calorie Calculator</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #000000;
-            color: #FFFFFF;
-            line-height: 1.6;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            text-align: center;
-        }
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #000000;
+        color: #FFFFFF;
+        line-height: 1.6;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start; /* Align content to the top */
+        min-height: 100vh; /* Ensure full viewport height is used */
+        overflow-y: auto; /* Enable vertical scrolling */
+        padding: 20px; /* Add padding for better spacing */
+    }
+
         .container {
             max-width: 800px;
             width: 100%;
