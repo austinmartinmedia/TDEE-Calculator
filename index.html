@@ -265,7 +265,7 @@
             totalFats += meal.fat;
         });
 
-            resultsHTML += '
+            resultsHTML += `
         <tr class="highlight">
             <td colspan="2">Totals</td>
             <td>${totalCalories.toFixed(2)}</td>
@@ -273,7 +273,7 @@
             <td>${totalFats.toFixed(2)}</td>
             <td>${totalCarbs.toFixed(2)}</td>
         </tr>
-    </table>';
+    </table>`;
     document.getElementById('results').innerHTML = resultsHTML;
 }
         
