@@ -137,44 +137,7 @@
     <div class="results" id="results"></div>
 
     <button id="downloadPDF">Download Results as PDF</button>
-
-    <script>
-        let mealPlans = {};
-        let BMR, TDEE, adjustedCalories;
-
-        document.getElementById('calculateTDEE').addEventListener('click', () => {
-            const weight = parseFloat(document.getElementById('weight').value);
-            const height = parseFloat(document.getElementById('height').value);
-            const age = parseInt(document.getElementById('age').value);
-            const sex = document.getElementById('sex').value;
-            const activity = parseFloat(document.getElementById('activity').value);
-            const goal = document.getElementById('goal').value;
-
-            if (!weight || !height || !age || weight <= 0 || height <= 0 || age <= 0) {
-                document.getElementById('calculationResults').innerHTML = '<p>Please fill out all fields correctly.</p>';
-                return;
-            }
-
-            BMR = sex === 'male' 
-                ? 66 + (6.23 * weight) + (12.7 * height) - (6.8 * age)
-                : 655 + (4.35 * weight) + (4.7 * height) - (4.7 * age);
-
-            TDEE = BMR * activity;
-
-            adjustedCalories = goal === 'cutting'
-                ? TDEE - 500
-                : goal === 'bulking'
-                ? TDEE + 300
-                : TDEE;
-
-            document.getElementById('calculationResults').innerHTML = `
-                <h4>Calculation Results:</h4>
-                <p><strong>BMR:</strong> ${BMR.toFixed(2)} calories/day</p>
-                <p><strong>TDEE:</strong> ${TDEE.toFixed(2)} calories/day</p>
-                <p><strong>Adjusted Calories (${goal.charAt(0).toUpperCase() + goal.slice(1)}):</strong> ${adjustedCalories.toFixed(2)} calories/day</p>
-            `;
-
-    <script>
+ <script>
         let mealPlans = {
             day1: [
                 { meal: "Breakfast", description: "3 eggs, 1/2 avocado, 1 slice whole-grain toast, 1 cup Greek yogurt with berries", calories: 580, protein: 35, carbs: 40, fat: 25 },
@@ -189,7 +152,7 @@
                 { meal: "Snack", description: "Greek yogurt with 1/4 cup granola and honey drizzle", calories: 350, protein: 18, carbs: 50, fat: 12 },
                 { meal: "Dinner", description: "Grilled steak (8 oz), 1 large baked potato, steamed asparagus, 1 tbsp olive oil", calories: 750, protein: 52, carbs: 65, fat: 30 },
                 { meal: "Post-Workout", description: "Protein shake with almond milk and 1 tbsp peanut butter", calories: 220, protein: 25, carbs: 10, fat: 10 }
-            ],
+            ], 
             day3: [
                 { meal: "Breakfast", description: "Smoothie (1 scoop protein powder, almond milk, 1 banana, 1 tbsp peanut butter, handful of spinach)", calories: 480, protein: 30, carbs: 40, fat: 18 },
                 { meal: "Lunch", description: "Chickpea salad (1 cup chickpeas, mixed greens, cucumber, cherry tomatoes, 1 tbsp olive oil) with 1 cup cooked quinoa", calories: 700, protein: 30, carbs: 85, fat: 28 },
@@ -213,6 +176,39 @@
             ]
         };
 
+        document.getElementById('calculateTDEE').addEventListener('click', () => {
+            const weight = parseFloat(document.getElementById('weight').value);
+            const height = parseFloat(document.getElementById('height').value);
+            const age = parseInt(document.getElementById('age').value);
+            const sex = document.getElementById('sex').value;
+            const activity = parseFloat(document.getElementById('activity').value);
+            const goal = document.getElementById('goal').value;
+
+            if (!weight || !height || !age || weight <= 0 || height <= 0 || age <= 0) {
+                document.getElementById('calculationResults').innerHTML = '<p>Please fill out all fields correctly.</p>';
+                return;
+            }
+
+            let BMR = sex === 'male' 
+                ? 66 + (6.23 * weight) + (12.7 * height) - (6.8 * age)
+                : 655 + (4.35 * weight) + (4.7 * height) - (4.7 * age);
+
+            let TDEE = BMR * activity;
+
+            let adjustedCalories = goal === 'cutting'
+                ? TDEE - 500
+                : goal === 'bulking'
+                ? TDEE + 300
+                : TDEE;
+
+            document.getElementById('calculationResults').innerHTML = `
+                <h4>Calculation Results:</h4>
+                <p><strong>BMR:</strong> ${BMR.toFixed(2)} calories/day</p>
+                <p><strong>TDEE:</strong> ${TDEE.toFixed(2)} calories/day</p>
+                <p><strong>Adjusted Calories (${goal.charAt(0).toUpperCase() + goal.slice(1)}):</strong> ${adjustedCalories.toFixed(2)} calories/day</p>
+            `;
+        });
+
         function showMealPlan() {
             const selectedDay = document.getElementById('daySelector').value;
             const mealPlan = mealPlans[selectedDay];
@@ -230,7 +226,7 @@
                     <td>${meal.description}</td>
                     <td>${meal.calories.toFixed(2)}</td>
                     <td>${meal.protein.toFixed(2)}</td>
-                    <td>${meal.fats.toFixed(2)}</td>
+                    <td>${meal.fat.toFixed(2)}</td>
                     <td>${meal.carbs.toFixed(2)}</td>
                 </tr>`;
             });
@@ -255,3 +251,4 @@
 </body>
 </html>
 
+    
