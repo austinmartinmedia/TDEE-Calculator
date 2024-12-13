@@ -251,7 +251,6 @@
             return { protein, carbs, fats };
         }
 
-        
        function showMealPlan(day) {
     const mealPlan = mealPlans[day];
 
@@ -272,7 +271,7 @@
         return;
     }
 
-    // Recalculate BMR, TDEE, and adjusted calories
+    // Calculate BMR, TDEE, and adjusted calories
     let BMR = sex === 'male'
         ? 66 + (6.23 * weight) + (12.7 * height) - (6.8 * age)
         : 655 + (4.35 * weight) + (4.7 * height) - (4.7 * age);
@@ -288,44 +287,63 @@
     // Get target macros
     const targetMacros = calculateTargetMacros(adjustedCalories, weight);
 
-    // Calculate meal plan totals
+    // Calculate current meal plan totals
     let totalCalories = 0, totalProtein = 0, totalCarbs = 0, totalFats = 0;
-    let resultsHTML = '<h4>Meal Plan:</h4><table><tr><th>Meal</th><th>Description</th><th>Calories</th><th>Protein (g)</th><th>Fats (g)</th><th>Carbs (g)</th></tr>';
-
     mealPlan.forEach(meal => {
-        resultsHTML += `<tr>
-            <td>${meal.meal}</td>
-            <td>${meal.description}</td>
-            <td>${meal.calories.toFixed(2)}</td>
-            <td>${meal.protein.toFixed(2)}</td>
-            <td>${meal.fat.toFixed(2)}</td>
-            <td>${meal.carbs.toFixed(2)}</td>
-        </tr>`;
         totalCalories += meal.calories;
         totalProtein += meal.protein;
         totalCarbs += meal.carbs;
         totalFats += meal.fat;
     });
 
-    // Display totals in the table
-    resultsHTML += `
+    // Calculate scaling factors
+    const proteinFactor = targetMacros.protein / totalProtein;
+    const carbFactor = targetMacros.carbs / totalCarbs;
+    const fatFactor = targetMacros.fats / totalFats;
+
+    // Adjust each meal based on scaling factors
+    let adjustedMealsHTML = '<h4>Meal Plan:</h4><table><tr><th>Meal</th><th>Description</th><th>Calories</th><th>Protein (g)</th><th>Fats (g)</th><th>Carbs (g)</th></tr>';
+    let adjustedTotalCalories = 0, adjustedTotalProtein = 0, adjustedTotalCarbs = 0, adjustedTotalFats = 0;
+
+    mealPlan.forEach(meal => {
+        const adjustedMeal = {
+            meal: meal.meal,
+            description: meal.description,
+            calories: meal.calories * ((proteinFactor + carbFactor + fatFactor) / 3), // Average scaling factor
+            protein: meal.protein * proteinFactor,
+            carbs: meal.carbs * carbFactor,
+            fat: meal.fat * fatFactor
+        };
+
+        adjustedMealsHTML += `<tr>
+            <td>${adjustedMeal.meal}</td>
+            <td>${adjustedMeal.description}</td>
+            <td>${adjustedMeal.calories.toFixed(2)}</td>
+            <td>${adjustedMeal.protein.toFixed(2)}</td>
+            <td>${adjustedMeal.fat.toFixed(2)}</td>
+            <td>${adjustedMeal.carbs.toFixed(2)}</td>
+        </tr>`;
+
+        adjustedTotalCalories += adjustedMeal.calories;
+        adjustedTotalProtein += adjustedMeal.protein;
+        adjustedTotalCarbs += adjustedMeal.carbs;
+        adjustedTotalFats += adjustedMeal.fat;
+    });
+
+    // Add totals row
+    adjustedMealsHTML += `
         <tr class="highlight">
             <td colspan="2">Totals</td>
-            <td>${totalCalories.toFixed(2)}</td>
-            <td>${totalProtein.toFixed(2)}</td>
-            <td>${totalFats.toFixed(2)}</td>
-            <td>${totalCarbs.toFixed(2)}</td>
-        </tr>
-        <tr class="highlight">
-            <td colspan="2">Recommended Macros</td>
-            <td>${adjustedCalories.toFixed(2)} cal</td>
-            <td>${targetMacros.protein}g</td>
-            <td>${targetMacros.fats}g</td>
-            <td>${targetMacros.carbs}g</td>
+            <td>${adjustedTotalCalories.toFixed(2)}</td>
+            <td>${adjustedTotalProtein.toFixed(2)}</td>
+            <td>${adjustedTotalFats.toFixed(2)}</td>
+            <td>${adjustedTotalCarbs.toFixed(2)}</td>
         </tr>
     </table>`;
-    document.getElementById('results').innerHTML = resultsHTML;
-}
+
+    // Update results in the DOM
+    document.getElementById('results').innerHTML = adjustedMealsHTML;
+}     
         
 document.getElementById('daySelector').addEventListener('change', (event) => {
             const selectedDay = event.target.value;
