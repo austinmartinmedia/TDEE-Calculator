@@ -217,6 +217,8 @@
                 ? TDEE + 300
                 : TDEE;
 
+            const targetMacros = calculateTargetMacros(adjustedCalories, goal);
+
             document.getElementById('calculationResults').innerHTML = `
                 <h4>Calculation Results:</h4>
                 <p><strong>BMR:</strong> ${BMR.toFixed(2)} calories/day</p>
@@ -229,6 +231,14 @@
             showMealPlan(selectedDay);
         });
 
+        function calculateTargetMacros(calories, goal) {
+            // Example: 40% protein, 40% carbs, 20% fat
+            const protein = Math.round((calories * 0.4) / 4);
+            const carbs = Math.round((calories * 0.4) / 4);
+            const fats = Math.round((calories * 0.2) / 9);
+            return { protein, carbs, fats };
+        }
+        
         function showMealPlan(day) {
             const mealPlan = mealPlans[day];
 
@@ -236,7 +246,8 @@
                 document.getElementById('results').innerHTML = '<p>Please calculate your TDEE first.</p>';
                 return;
             }
-
+            
+            let totalCalories = 0, totalProtein = 0, totalCarbs = 0, totalFats = 0;
             let resultsHTML = '<h4>Meal Plan:</h4><table><tr><th>Meal</th><th>Description</th><th>Calories</th><th>Protein (g)</th><th>Fats (g)</th><th>Carbs (g)</th></tr>';
 
             mealPlan.forEach(meal => {
@@ -248,28 +259,73 @@
                     <td>${meal.fat.toFixed(2)}</td>
                     <td>${meal.carbs.toFixed(2)}</td>
                 </tr>`;
-            });
+            totalCalories += meal.calories;
+            totalProtein += meal.protein;
+            totalCarbs += meal.carbs;
+            totalFats += meal.fat;
+        });
 
-            resultsHTML += '</table>';
-            document.getElementById('results').innerHTML = resultsHTML;
-        }
+            resultsHTML += '
+        <tr class="highlight">
+            <td colspan="2">Totals</td>
+            <td>${totalCalories.toFixed(2)}</td>
+            <td>${totalProtein.toFixed(2)}</td>
+            <td>${totalFats.toFixed(2)}</td>
+            <td>${totalCarbs.toFixed(2)}</td>
+        </tr>
+    </table>`;
+    document.getElementById('results').innerHTML = resultsHTML;
+}
         
-        document.getElementById('daySelector').addEventListener('change', (event) => {
+document.getElementById('daySelector').addEventListener('change', (event) => {
             const selectedDay = event.target.value;
             showMealPlan(selectedDay);
         });
         
         document.getElementById('downloadPDF').addEventListener('click', () => {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            const calculations = document.getElementById('calculationResults').innerText;
-            const meals = document.getElementById('results').innerText;
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
 
-            doc.text("TDEE and Meal Plan Results", 10, 10);
-            doc.text(calculations, 10, 20);
-            doc.text(meals, 10, 40);
-            doc.save('TDEE_Results.pdf');
+    // Add header
+    doc.text("TDEE and Meal Plan Results", 10, 10);
+
+    // Add calculations
+    const calculations = document.getElementById('calculationResults').innerText;
+    doc.text(calculations, 10, 20);
+
+    // Add all 5 days of meal plans
+    let yOffset = 40;
+    Object.keys(mealPlans).forEach(day => {
+        const mealPlan = mealPlans[day];
+        doc.text(`${day.toUpperCase()}:`, 10, yOffset);
+        yOffset += 10;
+
+        let totalCalories = 0, totalProtein = 0, totalCarbs = 0, totalFats = 0;
+
+        mealPlan.forEach(meal => {
+            doc.text(
+                `${meal.meal}: ${meal.description} | Calories: ${meal.calories}, Protein: ${meal.protein}g, Fats: ${meal.fat}g, Carbs: ${meal.carbs}g`,
+                10,
+                yOffset
+            );
+            yOffset += 10;
+            totalCalories += meal.calories;
+            totalProtein += meal.protein;
+            totalCarbs += meal.carbs;
+            totalFats += meal.fat;
         });
+
+        doc.text(
+            `Totals: Calories: ${totalCalories}, Protein: ${totalProtein}g, Fats: ${totalFats}g, Carbs: ${totalCarbs}g`,
+            10,
+            yOffset
+        );
+        yOffset += 20;
+    });
+
+    // Save the PDF
+    doc.save('TDEE_Meal_Plan.pdf');
+});
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
 </body>
