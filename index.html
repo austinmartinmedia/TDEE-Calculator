@@ -235,47 +235,93 @@
             showMealPlan(selectedDay);
         });
 
-        function calculateTargetMacros(calories, goal) {
-            // Example: 40% protein, 40% carbs, 20% fat
-            const protein = Math.round((calories * 0.4) / 4);
-            const carbs = Math.round((calories * 0.4) / 4);
-            const fats = Math.round((calories * 0.2) / 9);
+       function calculateTargetMacros(calories, weight) {
+            // Calculate protein based on 1.2g per lb of body weight
+            const protein = Math.round(weight * 1.2); // 1g of protein = 4 calories
+            const proteinCalories = protein * 4;
+        
+            // Distribute remaining calories between carbs and fats
+            const remainingCalories = calories - proteinCalories;
+            const fatCalories = Math.round(remainingCalories * 0.3); // 30% for fats
+            const carbCalories = remainingCalories - fatCalories; // Remaining for carbs
+        
+            const fats = Math.round(fatCalories / 9); // 1g of fat = 9 calories
+            const carbs = Math.round(carbCalories / 4); // 1g of carbs = 4 calories
+        
             return { protein, carbs, fats };
         }
+
         
-        function showMealPlan(day) {
-            const mealPlan = mealPlans[day];
+       function showMealPlan(day) {
+    const mealPlan = mealPlans[day];
 
-            if (!mealPlan) {
-                document.getElementById('results').innerHTML = '<p>Please calculate your TDEE first.</p>';
-                return;
-            }
-            
-            let totalCalories = 0, totalProtein = 0, totalCarbs = 0, totalFats = 0;
-            let resultsHTML = '<h4>Meal Plan:</h4><table><tr><th>Meal</th><th>Description</th><th>Calories</th><th>Protein (g)</th><th>Fats (g)</th><th>Carbs (g)</th></tr>';
+    if (!mealPlan) {
+        document.getElementById('results').innerHTML = '<p>Please calculate your TDEE first.</p>';
+        return;
+    }
 
-            mealPlan.forEach(meal => {
-                resultsHTML += `<tr>
-                    <td>${meal.meal}</td>
-                    <td>${meal.description}</td>
-                    <td>${meal.calories.toFixed(2)}</td>
-                    <td>${meal.protein.toFixed(2)}</td>
-                    <td>${meal.fat.toFixed(2)}</td>
-                    <td>${meal.carbs.toFixed(2)}</td>
-                </tr>`;
-            totalCalories += meal.calories;
-            totalProtein += meal.protein;
-            totalCarbs += meal.carbs;
-            totalFats += meal.fat;
-        });
+    const weight = parseFloat(document.getElementById('weight').value);
+    const height = parseFloat(document.getElementById('height').value);
+    const age = parseInt(document.getElementById('age').value);
+    const activity = parseFloat(document.getElementById('activity').value);
+    const sex = document.getElementById('sex').value;
 
-            resultsHTML += `
+    // Validate inputs
+    if (!weight || !height || !age || weight <= 0 || height <= 0 || age <= 0) {
+        document.getElementById('results').innerHTML = '<p>Please fill out all fields correctly.</p>';
+        return;
+    }
+
+    // Recalculate BMR, TDEE, and adjusted calories
+    let BMR = sex === 'male'
+        ? 66 + (6.23 * weight) + (12.7 * height) - (6.8 * age)
+        : 655 + (4.35 * weight) + (4.7 * height) - (4.7 * age);
+    let TDEE = BMR * activity;
+
+    const goal = document.getElementById('goal').value;
+    let adjustedCalories = goal === 'cutting'
+        ? TDEE - 500
+        : goal === 'bulking'
+        ? TDEE + 300
+        : TDEE;
+
+    // Get target macros
+    const targetMacros = calculateTargetMacros(adjustedCalories, weight);
+
+    // Calculate meal plan totals
+    let totalCalories = 0, totalProtein = 0, totalCarbs = 0, totalFats = 0;
+    let resultsHTML = '<h4>Meal Plan:</h4><table><tr><th>Meal</th><th>Description</th><th>Calories</th><th>Protein (g)</th><th>Fats (g)</th><th>Carbs (g)</th></tr>';
+
+    mealPlan.forEach(meal => {
+        resultsHTML += `<tr>
+            <td>${meal.meal}</td>
+            <td>${meal.description}</td>
+            <td>${meal.calories.toFixed(2)}</td>
+            <td>${meal.protein.toFixed(2)}</td>
+            <td>${meal.fat.toFixed(2)}</td>
+            <td>${meal.carbs.toFixed(2)}</td>
+        </tr>`;
+        totalCalories += meal.calories;
+        totalProtein += meal.protein;
+        totalCarbs += meal.carbs;
+        totalFats += meal.fat;
+    });
+
+    // Display totals in the table
+    resultsHTML += `
         <tr class="highlight">
             <td colspan="2">Totals</td>
             <td>${totalCalories.toFixed(2)}</td>
             <td>${totalProtein.toFixed(2)}</td>
             <td>${totalFats.toFixed(2)}</td>
             <td>${totalCarbs.toFixed(2)}</td>
+        </tr>
+        <tr class="highlight">
+            <td colspan="2">Recommended Macros</td>
+            <td>${adjustedCalories.toFixed(2)} cal</td>
+            <td>${targetMacros.protein}g</td>
+            <td>${targetMacros.fats}g</td>
+            <td>${targetMacros.carbs}g</td>
         </tr>
     </table>`;
     document.getElementById('results').innerHTML = resultsHTML;
