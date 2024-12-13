@@ -34,7 +34,7 @@
             border: 1px solid #9cf74d;
             font-size: 1.2em;
             margin: auto;
-            display: auto;
+            display: block;
         }
         button {
             margin-top: 10px;
@@ -43,6 +43,7 @@
             color: #000000;
             border: none;
             cursor: pointer;
+            display: block;
         }
         button:hover {
             background-color: #7FBF3C;
@@ -55,7 +56,7 @@
             display: inline-block;
         }
         .calculation-results {
-            margin-bottom: 20px;
+            margin-top: 20px;
             padding: 10px;
             background-color: #222;
             border: 1px solid #444;
@@ -137,7 +138,7 @@
         <div class="calculation-results" id="calculationResults"></div>
 
         <label for="daySelector">Select Day:</label>
-        <select id="daySelector" class="day-selector" 
+        <select id="daySelector" class="day-selector">
             <option value="day1">Day 1</option>
             <option value="day2">Day 2</option>
             <option value="day3">Day 3</option>
@@ -148,9 +149,9 @@
         <div class="results" id="results"></div>
 
         <button id="downloadPDF">Download Results as PDF</button>
-</div>
-    
-<script>
+    </div>
+
+    <script>
         let mealPlans = {
             day1: [
                 { meal: "Breakfast", description: "3 eggs, 1/2 avocado, 1 slice whole-grain toast, 1 cup Greek yogurt with berries", calories: 580, protein: 35, carbs: 40, fat: 25 },
@@ -220,14 +221,14 @@
                 <p><strong>TDEE:</strong> ${TDEE.toFixed(2)} calories/day</p>
                 <p><strong>Adjusted Calories (${goal.charAt(0).toUpperCase() + goal.slice(1)}):</strong> ${adjustedCalories.toFixed(2)} calories/day</p>
             `;
+
             const daySelector = document.getElementById('daySelector');
             const selectedDay = daySelector.value;
             showMealPlan(selectedDay);
         });
 
-        function showMealPlan() {
-            const selectedDay = document.getElementById('daySelector').value;
-            const mealPlan = mealPlans[selectedDay];
+        function showMealPlan(day) {
+            const mealPlan = mealPlans[day];
 
             if (!mealPlan) {
                 document.getElementById('results').innerHTML = '<p>Please calculate your TDEE first.</p>';
@@ -266,5 +267,3 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
 </body>
 </html>
-
-    
